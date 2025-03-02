@@ -18,9 +18,19 @@ app.use(cors(corsOptions))
 app.use('/api/upload', uploadRouter)
 app.use('/api/videos', videoRouter)
 
-mongoose.connect(process.env.MONGO_URI).then(() => {
+app.get('/api/test', async (req, res)=>{
+
+    return res.status(200).json({
+        message:'test success'
+    })
+})
+
+
+
+mongoose.connect(process.env.MONGO_URI).then(async() => {
 
     app.listen(process.env.PORT, () => {
         console.log(`App running on port ${process.env.PORT}`)
     })
+
 })

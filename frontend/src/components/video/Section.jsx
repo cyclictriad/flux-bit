@@ -1,4 +1,6 @@
 import { FaPlay, FaFire, FaArrowRight } from 'react-icons/fa';
+import { Link } from 'react-router-dom';
+
 
 const VideoSection = ({ title, icon, videos, isLoading, onViewAll }) => (
     <div className="bg-gray-50 dark:bg-gray-700 p-6 rounded-xl shadow-sm">
@@ -26,7 +28,7 @@ const VideoSection = ({ title, icon, videos, isLoading, onViewAll }) => (
         <div className="grid gap-4">
           {videos.map(video => (
             <Link 
-              to={`/video/${video._id}`} 
+              to={`/play/${video._id}`} 
               key={video._id || video.cloudinary?.publicId} 
               className="flex bg-white dark:bg-gray-800 rounded-lg shadow hover:shadow-md transition group overflow-hidden border border-gray-100 dark:border-gray-600"
             >
@@ -37,7 +39,7 @@ const VideoSection = ({ title, icon, videos, isLoading, onViewAll }) => (
                   className="w-full h-full object-cover"
                   onError={(e) => {
                     e.target.onerror = null;
-                    e.target.src = 'https://via.placeholder.com/128x96?text=Video';
+                    e.target.src = 'https://placehold.co/128x96?text=Video';
                   }}
                 />
                 <div className="absolute inset-0 bg-black bg-opacity-30 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">

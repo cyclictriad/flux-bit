@@ -1,54 +1,30 @@
 import React, { useState } from 'react';
 import { useDispatch } from "react-redux";
-import { startUpload, updateProgress, uploadSuccess, uploadFailed, retryUpload } from "../store/features/uploadsSlice";
-import useWorker from "../hooks/useWorker";
 import { FaCloudUploadAlt } from 'react-icons/fa';
-import { saveFileToKV } from "../utils/storage";
+import { addToQueueAsync } from '../store/features/uploadsSlice';
 
 
 const UploadPage = () => {
-    const [file, setFile] = useState(null);
+    const [fileData, setFileData] = useState(null);
     const [title, setTitle] = useState('');
     const [description, setDescription] = useState('');
     const [preview, setPreview] = useState(null);
 
     const dispatch = useDispatch();
 
-    const worker = useWorker("../workers/upload.js", {
-        onMessage: (data) => {
-            const { type, uploadId, progress, error } = data;
-
-            if (type === "progress") {
-                dispatch(updateProgress({ uploadId, progress }));
-            } else if (type === "success") {
-                dispatch(uploadSuccess({ uploadId }));
-            } else if (type === "error") {
-                dispatch(uploadFailed({ uploadId, error }));
-            } else if (type === "retry") {
-                dispatch(retryUpload({ uploadId }));
-                restartUpload(uploadId, true);
-            }
-        },
-    });
-
-    const restartUpload = (uploadId, retry = false) => {
-        dispatch(retryUpload({ uploadId }));
-        worker.sendMessage({ uploadId, title, description, retry });
-    };
-
-
     // Handle file selection
     const handleFileChange = (e) => {
-        const selectedFile = e.target.files[0];
-        if (selectedFile) {
-            setFile(selectedFile);
-            setPreview(URL.createObjectURL(selectedFile));
+        const selectedFiles = e.target.files;
+        if (selectedFiles) {
+            setFileData(selectedFiles);
+            setPreview(URL.createObjectURL(selectedFiles[0]));
         }
     };
 
+
     // Reset form after upload
     const resetForm = () => {
-        setFile(null);
+        setFileData(null);
         setTitle('');
         setDescription('');
         setPreview(null);
@@ -57,17 +33,14 @@ const UploadPage = () => {
     const handleUpload = async (e) => {
         e.preventDefault();
 
-        if (!file || !title.trim() || !description.trim()) {
+        if (!fileData || fileData?.length < 1 || !title.trim() || !description.trim()) {
             alert("Please provide file, title, and description!");
             return;
         }
 
         const uploadId = Date.now();
 
-        await saveFileToKV(uploadId, file);
-
-        dispatch(startUpload({ uploadId, title, description }));
-        worker.sendMessage({ uploadId, title, description });
+        dispatch(addToQueueAsync(uploadId, title, description, fileData));
 
         resetForm()
     };
@@ -81,7 +54,7 @@ const UploadPage = () => {
                 <label className="border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg p-6 flex flex-col items-center justify-center cursor-pointer">
                     <FaCloudUploadAlt className="w-12 h-12 text-gray-500 dark:text-gray-400 mb-2" />
                     <span className="text-gray-700 dark:text-gray-300">Click to upload or drag & drop</span>
-                    <input type="file" className="hidden" onChange={handleFileChange} accept="video/*" />
+                    <input type="file" multiple className="hidden" onChange={handleFileChange} accept="video/*" />
                 </label>
 
                 {/* Preview */}
@@ -111,7 +84,7 @@ const UploadPage = () => {
                         required
                     ></textarea>
 
-                  
+
 
                     {/* Upload Button */}
                     <button

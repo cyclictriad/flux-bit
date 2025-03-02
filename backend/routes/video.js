@@ -28,7 +28,7 @@ videoRouter.post('/', validateBody({schema:videoSchema}),  async(req, res) =>{
     try{
         const videoDetails = req.body;
 
-        const Video = await Video.create(videoDetails)
+        const video = await Video.create(videoDetails)
 
         res.sendStatus(200)
     }catch(error){
@@ -46,7 +46,7 @@ videoRouter.put('/:id', validateBody({schema:videoSchema}),  async(req, res) =>{
 
         const newVideoDetails = req.body;
 
-        const Video = await Video.findByIdAndUpdate(videoId, newVideoDetails)
+        const video = await Video.findByIdAndUpdate(videoId, newVideoDetails)
 
         res.sendStatus(200)
     }catch(error){

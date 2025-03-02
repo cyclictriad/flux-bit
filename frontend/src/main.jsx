@@ -2,13 +2,9 @@ import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import { Provider } from 'react-redux';
 import { store } from './store';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import App from './App';
 import './index.css';
-
-// Create a QueryClient instance
-const queryClient = new QueryClient();
-
+import ToastManager from './components/toast/Manager';
 
 // Register service worker (if PWA plugin enabled)
 if ('serviceWorker' in navigator) {
@@ -23,10 +19,9 @@ if ('serviceWorker' in navigator) {
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
-    <QueryClientProvider client={queryClient}>
-      <Provider store={store}>
-        <App />
-      </Provider>
-    </QueryClientProvider>
+    <Provider store={store}>
+      <App />
+      <ToastManager />
+    </Provider>
   </StrictMode>
 );

@@ -77,6 +77,7 @@ export const fetchVideos = createAsyncThunk(
       }
       
       const response = await fetchVideosApi(params);
+
       return { data: response, category: category || state.activeCategory };
     } catch (error) {
       return rejectWithValue(error.message || 'Failed to fetch videos');
@@ -136,13 +137,13 @@ const videosSlice = createSlice({
         const { data, category } = action.payload;
         
         state.status = 'succeeded';
-        state.items = data.videos;
-        state.filteredItems = data.videos;
+        state.items = data;
+        state.filteredItems = data;
         state.pagination[category].total = data.totalPages;
         
         // If we're in search mode, store the filtered results
         if (category === 'search' && state.searchTerm) {
-          state.filteredItems = data.videos;
+          state.filteredItems = data;
         }
       })
       .addCase(fetchVideos.rejected, (state, action) => {
@@ -152,8 +153,7 @@ const videosSlice = createSlice({
   },
 });
 
-export const getCurrentVideoDetails = (state) =>
-  [...state.videos.items].find(v => v._id == state.videos.currentVideoId);
+
 
 
 // Configure Fuse.js for pattern matching
@@ -162,22 +162,42 @@ const fuseOptions = {
   threshold: 0.3, // Adjust similarity sensitivity (0 = strict, 1 = loose)
 };
 
-export const getRelatedVideos = (state) => {
-  const currentVideo = getCurrentVideoDetails(state);
-
-  if (!currentVideo) return [];
-
-  // Create a Fuse instance with all videos except the current one
-  const fuse = new Fuse(state.videos.items.filter(v => v._id !== currentVideo._id), fuseOptions);
-
-  // Search for related videos based on title & description
-  return fuse.search(currentVideo.title + ' ' + currentVideo.description).map(result => result.item);
-};
 
 
 
 // Base selector to get videos array
-const selectVideos = (state) => state.videos?.items || [];
+const selectVideos = (state) => {
+  return state.videos?.items || [];
+}
+
+// Selector to get current video ID
+const selectCurrentVideoId = (state) => state.videos?.currentVideoId;
+
+export const getCurrentVideoDetails = createSelector(
+  [selectVideos, selectCurrentVideoId],
+  (videos, currentVideoId) => {
+    return videos.find(v => v._id === currentVideoId) || null
+  }
+);
+
+
+// Memoized selector for related videos
+export const getRelatedVideos = createSelector(
+  [selectVideos, getCurrentVideoDetails],
+  (videos, currentVideo) => {
+
+    if (!currentVideo) return [];
+
+    const fuse = new Fuse(
+      videos.filter((v) => v._id !== currentVideo._id), 
+      fuseOptions
+    );
+
+    return fuse.search(currentVideo.title + " " + currentVideo.description)
+      .map((result) => result.item);
+  }
+);
+
 
 // Memoized selector for featured videos
 export const selectFeaturedVideos = createSelector(

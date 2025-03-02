@@ -1,4 +1,4 @@
-import { createSlice } from '@reduxjs/toolkit';
+import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
     video: null,
@@ -6,39 +6,27 @@ const initialState = {
     muted: false,
     volume: 0.5,
     playbackRate: 1,
-    played: 0,
+    played: 0, // Percentage of progress (0-100)
     seeking: false,
-    Loop: false,
+    loop: false,
+    currentTime: 0, // Current time in seconds
+    duration: 0, // Total duration in seconds
 };
 
 const playerSlice = createSlice({
     name: 'player',
     initialState,
     reducers: {
-        setVideo: (state, action) => {
-            state.video = action.payload;
-        },
-        setPlaying: (state, action) => {
-            state.playing = action.payload;
-        },
-        setMuted: (state, action) => {
-            state.muted = action.payload;
-        },
-        setVolume: (state, action) => {
-            state.volume = action.payload;
-        },
-        setPlaybackRate: (state, action) => {
-            state.playbackRate = action.payload;
-        },
-        setPlayed: (state, action) => {
-            state.played = action.payload;
-        },
-        setSeeking: (state, action) => {
-            state.seeking = action.payload;
-        },
-        setLoop: (state, action) => {
-            state.Loop = action.payload;
-        },
+        setVideo: (state, action) => { state.video = action.payload; },
+        setPlaying: (state, action) => { state.playing = action.payload; },
+        setMuted: (state, action) => { state.muted = action.payload; },
+        setVolume: (state, action) => { state.volume = action.payload; },
+        setPlaybackRate: (state, action) => { state.playbackRate = action.payload; },
+        setPlayed: (state, action) => { state.played = action.payload; },
+        setSeeking: (state, action) => { state.seeking = action.payload; },
+        setLoop: (state, action) => { state.loop = action.payload; },
+        setCurrentTime: (state, action) => { state.currentTime = action.payload; },
+        setDuration: (state, action) => { state.duration = action.payload; },
     },
 });
 
@@ -51,6 +39,8 @@ export const {
     setPlayed,
     setSeeking,
     setLoop,
+    setCurrentTime,
+    setDuration
 } = playerSlice.actions;
 
 export default playerSlice.reducer;
