@@ -1,4 +1,4 @@
-const {default: Video, videoSchema} = require('../models/Video');
+const { default: Video, videoSchema } = require('../models/Video');
 const { validateBody } = require('../utils/router');
 const axios = require('axios')
 
@@ -7,41 +7,44 @@ const Router = require('express').Router;
 const videoRouter = Router();
 
 
-videoRouter.get('/',  async(req, res) =>{
-    try{
+videoRouter.get('/', async (req, res) => {
+    try {
         const videos = await Video.find({});
 
         res.status(200).json(videos)
 
-    }catch(error){
+    } catch (error) {
 
         console.log(error.message)
         res.status(500).json({
-            error:error.message
+            error: error.message
         })
     }
 })
 
 
 
-videoRouter.post('/', validateBody({schema:videoSchema}),  async(req, res) =>{
-    try{
+videoRouter.post('/', validateBody({ schema: videoSchema }), async (req, res) => {
+    try {
         const videoDetails = req.body;
+
+        console.log(typeof videoDetails)
+        console.log(videoDetails)
 
         const video = await Video.create(videoDetails)
 
         res.sendStatus(200)
-    }catch(error){
+    } catch (error) {
 
         console.log(error.message)
         res.status(500).json({
-            error:error.message
+            error: error.message
         })
     }
 })
 
-videoRouter.put('/:id', validateBody({schema:videoSchema}),  async(req, res) =>{
-    try{
+videoRouter.put('/:id', validateBody({ schema: videoSchema }), async (req, res) => {
+    try {
         const videoId = req.params.id;
 
         const newVideoDetails = req.body;
@@ -49,18 +52,18 @@ videoRouter.put('/:id', validateBody({schema:videoSchema}),  async(req, res) =>{
         const video = await Video.findByIdAndUpdate(videoId, newVideoDetails)
 
         res.sendStatus(200)
-    }catch(error){
+    } catch (error) {
 
         console.log(error.message)
         res.status(500).json({
-            error:error.message
+            error: error.message
         })
     }
 })
 
 
-videoRouter.patch('/:id', async(req, res) =>{
-    try{
+videoRouter.patch('/:id', async (req, res) => {
+    try {
         const videoId = req.params.id;
 
         const video = await Video.findById(videoId)
@@ -68,22 +71,22 @@ videoRouter.patch('/:id', async(req, res) =>{
         await video.incViews()
 
         res.sendStatus(200)
-    }catch(error){
+    } catch (error) {
 
         console.log(error.message)
         res.status(500).json({
-            error:error.message
+            error: error.message
         })
     }
 })
 
-videoRouter.delete('/:id',  async(req, res) =>{
-    try{
+videoRouter.delete('/:id', async (req, res) => {
+    try {
         const videoId = req.params.id;
 
         const deletedVideo = await Video.findByIdAndDelete(videoId);
 
-        if(!deletedVideo){
+        if (!deletedVideo) {
             return res.sendStatus(404)
         }
 
@@ -92,11 +95,11 @@ videoRouter.delete('/:id',  async(req, res) =>{
 
         await axios.delete(deleteUrl)
 
-    }catch(error){
+    } catch (error) {
 
         console.log(error.message)
         res.status(500).json({
-            error:error.message
+            error: error.message
         })
     }
 })

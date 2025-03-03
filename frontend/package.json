@@ -11,8 +11,7 @@
   },
   "dependencies": {
     "@cloudinary/url-gen": "^1.21.0",
-    "@ffmpeg/ffmpeg": "^0.12.15",
-    "@ffmpeg/util": "^0.12.2",
+    "@ffmpeg/core": "^0.12.10",
     "@reduxjs/toolkit": "^2.6.0",
     "@tailwindcss/vite": "^4.0.9",
     "@tanstack/react-query": "^5.66.10",
@@ -23,6 +22,7 @@
     "idb-keyval": "^6.2.1",
     "localforage": "^1.10.0",
     "lodash": "^4.17.21",
+    "mp4box": "^0.5.3",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-icons": "^5.5.0",

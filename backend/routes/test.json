@@ -1,0 +1,18 @@
+{
+    "title": "Video 1",
+    "description": "Video description",
+    "cloudinary": {
+        "cloudinary": {
+            "publicId": "video-uploads/ceykfhxezlx29rwcmvqb",
+            "secureUrl": "https://res.cloudinary.com/djwlujwil/video/upload/v1741008223/video-uploads/ceykfhxezlx29rwcmvqb.mp4",
+            "originalFilename": "SampleVideo_1280x720_1mb.mp4",
+            "format": "mp4",
+            "bytes": 1055736,
+            "thumbnailUrl": "https://res.cloudinary.com/djwlujwil/video/upload/w_300,h_200,c_fill/v1741008223/video-uploads/ceykfhxezlx29rwcmvqb.jpg",
+            "resourceType": "video",
+            "createdAt": {
+                "$date": "2025-03-03T13:23:44.417Z"
+            }
+        }
+    }
+}

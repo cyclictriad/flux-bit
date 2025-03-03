@@ -19,7 +19,7 @@ module.exports.validateBody = function ({ include = [], schema = {} } = {}) {
         if (typeof schema === 'object') {
             Object.entries(schema).forEach(([key, rules]) => {
                 const value = customGet(body, key);
-                
+
                 if (rules.required && value === undefined) {
                     errors.required.push(key);
                 }
@@ -33,11 +33,14 @@ module.exports.validateBody = function ({ include = [], schema = {} } = {}) {
         }
 
         if (errors.required.length > 0 || errors.invalid.length > 0) {
-            return res.status(400).json({ error: 'Validation failed', errors: {
-                required: errors.required.join(', '),
-                invalid: errors.invalid.join(', ')
-            }});
+            return res.status(400).json({
+                error: 'Validation failed', errors: {
+                    required: errors.required.join(', '),
+                    invalid: errors.invalid.join(', ')
+                }
+            });
         }
+        
         next();
     };
 };

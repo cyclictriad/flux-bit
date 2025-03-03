@@ -14,10 +14,10 @@ const UploadPage = () => {
 
     // Handle file selection
     const handleFileChange = (e) => {
-        const selectedFiles = e.target.files;
-        if (selectedFiles) {
-            setFileData(selectedFiles);
-            setPreview(URL.createObjectURL(selectedFiles[0]));
+        const selectedFile = e.target.files[0];
+        if (selectedFile) {
+            setFileData(selectedFile);
+            setPreview(URL.createObjectURL(selectedFile));
         }
     };
 
@@ -54,7 +54,7 @@ const UploadPage = () => {
                 <label className="border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg p-6 flex flex-col items-center justify-center cursor-pointer">
                     <FaCloudUploadAlt className="w-12 h-12 text-gray-500 dark:text-gray-400 mb-2" />
                     <span className="text-gray-700 dark:text-gray-300">Click to upload or drag & drop</span>
-                    <input type="file" multiple className="hidden" onChange={handleFileChange} accept="video/*" />
+                    <input type="file" className="hidden" onChange={handleFileChange} accept="video/*" />
                 </label>
 
                 {/* Preview */}

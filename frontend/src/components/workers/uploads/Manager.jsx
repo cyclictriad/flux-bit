@@ -1,55 +1,56 @@
 import { useEffect, useRef } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { startProcessing, uploadFailed, uploadFile } from '../../../store/features/uploadsSlice';
+import { uploadFile } from '../../../store/features/uploadsSlice';
 
 const UploadSequenceManager = () => {
   const uploads = useSelector(state => state.uploads.uploads);
+
   const dispatch = useDispatch();
   const workerRef = useRef(null);
 
   useEffect(() => {
     // Create the background worker
-    const worker = new Worker(new URL('../../../workers/uploads/backgroundWorker.js', import.meta.url), { type: 'module' });
-    workerRef.current = worker;
+    const backgroundWorker = new Worker(new URL('../../../workers/uploads/backgroundWorker.js', import.meta.url), { type: 'module' });
+    workerRef.current = backgroundWorker;
 
     // Handle messages from worker
-    worker.onmessage = (event) => {
-      const { type, uploadId, optimizedData, progress, error, result } = event.data;
+    backgroundWorker.onmessage = (event) => {
+      const { type, uploadId } = event.data;
 
       switch (type) {
-        case "processingStarted":
-          dispatch(startProcessing(uploadId));
-          break;
 
         case "startUpload":
 
+          console.log("Started uploading in worker manager..")
+
           // Then start the upload - this will use the Redux thunk
           dispatch(uploadFile(uploadId))
-            .then(result => {
+            .then(() => {
               // Notify worker when upload is complete
-              worker.postMessage({
+              backgroundWorker.postMessage({
                 type: "uploadComplete",
                 uploadId,
-                result: result.payload?.result
               });
             })
             .catch(error => {
-              dispatch(uploadFailed(uploadId, error || new Error('Upload failed')));
+
+              console.log("Error happened in worker manager..")
+
+              // dispatch(uploadFailed({
+              //   uploadId,
+              //   error: error.message || 'Upload failed'
+              // }));
 
             });
-          break;
-
-        case "processingError":
-          dispatch(uploadFailed(uploadId, error || new Error('Processing failed')));
 
           break;
       }
     };
 
     // Initialize worker with current uploads
-    worker.postMessage({ uploads });
+    backgroundWorker.postMessage({ uploads });
 
-    return () => worker.terminate();
+    return () => backgroundWorker.terminate();
   }, []);
 
   // When uploads state changes (new uploads added), send updates to worker
