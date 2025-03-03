@@ -28,9 +28,6 @@ videoRouter.post('/', validateBody({ schema: videoSchema }), async (req, res) =>
     try {
         const videoDetails = req.body;
 
-        console.log(typeof videoDetails)
-        console.log(videoDetails)
-
         const video = await Video.create(videoDetails)
 
         res.sendStatus(200)
